@@ -39,7 +39,7 @@ class block {
 } //积木类
 
 var occupiedMap = []; //占位棋盘，用来标注棋盘任一个方块所属的积木
-var curBlocks = []; //场上当前积木数组
+//var curBlocks = []; //场上当前积木数组
 var occupiedSquareCount = 0; //场上被积木占据的方块数量
 
 function Start() {
@@ -53,6 +53,10 @@ function StartNewGame() {
   BuildoccupiedMap(blocks, 10, 10);
   DrawMap(blocks);
 } //开始一局新游戏
+
+function GameEnd() {
+
+} //游戏结束时的函数
 
 function BuildoccupiedMap(blocks, xCount, yCount) {
   var arr = new Array(xCount); //表格的行数
@@ -180,6 +184,16 @@ function DrawBlock(block, length) {
   DrawArrow(xPoint + xLength / 2, yPoint + yLength / 2, block.direction, fontLength);
 } //绘制积木（注意，矩形的原点在左上角）
 
+function DeleteBlock(block) {
+  for (var i = 0; i < block.squares.length; i++) {
+    occupiedMap[block.squares[i].x][block.squares[i].y] = null;
+    occupiedSquareCount--;
+    if (occupiedSquareCount < 1) {
+      GameEnd();
+    }
+  }
+} //删除积木
+
 function ClearBlock(block, length) {
   var minX = block.squares[0].x, minY = block.squares[0].y,
     xCount = 1, yCount = 1;
@@ -209,25 +223,90 @@ function DrawArrow(x, y, direction, length) {
 } //绘制箭头（注意，文字的原点在左下角）
 
 function BlockCanMove(block, xCount, yCount) {
+  if (!block) return false;
   var curSquare;
   for (var i = 0; i < block.squares.length; i++) {
     curSquare = block.squares[i];
     if (block.direction == directionEnum.up) {
+      if (curSquare.y - 1 > 0 &&
+        occupiedMap[curSquare.x][curSquare.y - 1] &&
+        occupiedMap[curSquare.x][curSquare.y - 1] != block) {
+        return false;
+      } //如果此方块的移动方向上邻接一个方块，且邻接方块不属于此积木，说明此积木不可移动
     }
     else if (block.direction == directionEnum.down) {
+      if (curSquare.y + 1 < yCount &&
+        occupiedMap[curSquare.x][curSquare.y + 1] &&
+        occupiedMap[curSquare.x][curSquare.y + 1] != block) {
+        return false;
+      }
     }
     else if (block.direction == directionEnum.left) {
+      if (curSquare.x - 1 > 0 &&
+        occupiedMap[curSquare.x - 1][curSquare.y] &&
+        occupiedMap[curSquare.x - 1][curSquare.y] != block) {
+        return false;
+      }
     }
     else if (block.direction == directionEnum.right) {
+      if (curSquare.x + 1 < xCount &&
+        occupiedMap[curSquare.x + 1][curSquare.y] &&
+        occupiedMap[curSquare.x + 1][curSquare.y] != block) {
+        return false;
+      }
     }
   }
   return true;
 } //判断积木是否可以移动
 
+function MoveBlock(block, xCount, yCount, length) {
+  ClearBlock(block, length);
+  var curSquare;
+  for (var i = 0; i < block.squares.length; i++) {
+    curSquare = block.squares[i];
+    occupiedMap[curSquare.x][curSquare.y] = null;
+    if (block.direction == directionEnum.up) {
+      if (curSquare.y == 0) {
+        DeleteBlock(block);
+        return;
+      }
+      curSquare.y -= 1;
+    }
+    else if (block.direction == directionEnum.down) {
+      if (curSquare.y == yCount - 1) {
+        DeleteBlock(block);
+        return;
+      }
+      curSquare.y += 1;
+    }
+    else if (block.direction == directionEnum.left) {
+      if (curSquare.x == 0) {
+        DeleteBlock(block);
+        return;
+      }
+      curSquare.x -= 1;
+    }
+    else if (block.direction == directionEnum.right) {
+      if (curSquare.x == xCount - 1) {
+        DeleteBlock(block);
+        return;
+      }
+      curSquare.x += 1;
+    }
+    occupiedMap[curSquare.x][curSquare.y] = block;
+  }
+  DrawBlock(block, length);
+} //移动积木
+
 function BindCanvasClickEvent(canvas) {
   canvas.addEventListener('click', function (e) {
     pos = getEventPosition(e); //点击的坐标
-    ClearBlock(GetBlockByPosition(pos.x, pos.y, 60), 60);
+    //console.log(BlockCanMove(GetBlockByPosition(pos.x, pos.y, 60), 10, 10));
+    //ClearBlock(GetBlockByPosition(pos.x, pos.y, 60), 60);
+    curBlock = GetBlockByPosition(pos.x, pos.y, 60);
+    if (BlockCanMove(curBlock, 10, 10)) {
+      MoveBlock(curBlock, 10, 10, 60);
+    }
   })
 } //为canvas绑定点击事件
 
