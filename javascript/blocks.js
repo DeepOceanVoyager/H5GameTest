@@ -12,13 +12,16 @@ js数组坐标轴：
 2,0 2,1 2,2
 ...
 */
-const c = document.getElementById("canvas");
-//找到 <canvas> 元素
+const c = document.getElementById("canvas");//找到 <canvas> 元素
+const b = document.getElementById("refresh");
+const s = document.getElementById("score");
+
 const ctx = c.getContext("2d");
 //getContext("2d") 对象是内建的 HTML5 对象，拥有多种绘制路径、矩形、圆形、字符以及添加图像的方法
 const squareLength = 120; //单位方块的边长（像素）
 const xCount = 5; //棋盘有多少列
 const yCount = xCount; //棋盘有多少行
+var score = 0; //游戏得分
 
 window.onload = function () {
   Start();
@@ -52,6 +55,7 @@ var occupiedSquareCount = 0; //场上被积木占据的方块数量
 
 function Start() {
   BindCanvasClickEvent(c);
+  BindButtonClickEvent(b);
   StartNewGame();
 } //全局开始
 
@@ -220,6 +224,8 @@ function DeleteBlock(block) {
   for (var i = 0; i < block.squares.length; i++) {
     occupiedMap[block.squares[i].x][block.squares[i].y] = null;
     occupiedSquareCount--;
+    score++;
+    UpdateScoreView(s, score);
     if (occupiedSquareCount < 1) {
       GameEnd();
     }
@@ -345,6 +351,16 @@ function BindCanvasClickEvent(canvas) {
     }
   })
 } //为canvas绑定点击事件
+
+function BindButtonClickEvent(button) {
+  button.addEventListener('click', function (e) {
+    StartNewGame();
+  })
+} //为刷新按钮绑定事件
+
+function UpdateScoreView(scoreView, newScore) {
+  scoreView.innerHTML = newScore.toString();
+} //更新分数显示
 
 function GetBlockByPosition(xPos, yPos) {
   return occupiedMap[Math.floor(xPos / squareLength)][Math.floor(yPos / squareLength)];

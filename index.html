@@ -6,28 +6,110 @@
 	<meta charset="UTF-8">
 	<meta name="keywords" content="抽出方块">
 	<meta name="Description" content="这是一个初学者用来学习的小游戏">
+	<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
 	<style type="text/css">
-		.map {
+		.flex-container {
+			display: -webkit-flex;
+			display: flex;
+			-webkit-align-items: center;
+			-webkit-justify-content: space-around;
+			justify-content: space-around;
+			width: 100vw;
+			height: 100vh;
 			position: absolute;
 			top: 0;
 			bottom: 0;
 			left: 0;
 			right: 0;
 			margin: auto;
+		}
+
+		.score {
+			height: 70px;
+			width: 300px;
+			background: #cfcfcf;
+			border-radius: 70px;
+			margin: 0;
+			text-align: center;
+			line-height: 70px;
+			font-size: 40px;
+			font-weight: 800;
+		}
+
+		.map {
 			height: 600px;
 			width: 600px;
 			background: #cfcfcf;
 			border: 10px solid #cfcfcf;
 			border-radius: 8px;
+			margin: 0;
+		}
+
+		.refresh {
+			height: 100px;
+			width: 300px;
+			margin: 0;
+			text-align: center;
+			line-height: 100px;
+			font-size: 80px;
+		}
+
+		/* 响应式布局 - 宽度小于1200px时设置上下布局 */
+
+		@media screen and (max-width: 1200px) {
+			.flex-container {
+				display: -webkit-flex;
+				display: flex;
+				-webkit-flex-direction: column;
+				flex-direction: column;
+				-webkit-align-items: center;
+				-webkit-justify-content: space-around;
+				justify-content: space-around;
+				width: 100vw;
+				height: 100vh;
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				margin: auto;
+			}
+
+			.score {
+				height: 120px;
+				width: 500px;
+				background: #cfcfcf;
+				border-radius: 120px;
+				margin: 0;
+				text-align: center;
+				line-height: 120px;
+				font-size: 70px;
+				font-weight: 800;
+			}
+
+			.refresh {
+				height: 100px;
+				width: 300px;
+				margin: 0;
+				text-align: center;
+				line-height: 100px;
+				font-size: 150px;
+			}
 		}
 	</style>
 </head>
 
 <body>
-	<div class="map">
-		<canvas id="canvas" height="600" width="600" style="position: absolute;">
-			您的浏览器不支持 HTML5 canvas 标签
-		</canvas>
+	<div class="flex-container">
+		<div class="score" id="score">0</div>
+		<div class="map">
+			<canvas id="canvas" height="600" width="600" style="position: absolute;">
+				您的浏览器不支持 HTML5 canvas 标签
+			</canvas>
+		</div>
+		<div class="refresh" id="refresh">
+			<i class="fa fa-refresh fa-spin" aria-hidden="true"></i>
+		</div>
 	</div>
 	<script src="javascript/blocks.js"></script>
 </body>
