@@ -2,4 +2,4 @@
 
 My first h5 game.
 
-<https://nddszy.github.io/H5GameTest/>
+<https://deepoceanvoyager.github.io/H5GameTest>
